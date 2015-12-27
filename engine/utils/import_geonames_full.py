@@ -74,7 +74,7 @@ if __name__ == "__main__":
   with open(filename) as infile:
     for line in infile:
         location = buildLocation(line)
-        loc_id = geonames.insert_one(location).inserted_id      
+        loc_id = geonames.insert_one(location) .inserted_id      
         print(loc_id)
 
   
