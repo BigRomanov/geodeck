@@ -148,9 +148,12 @@ if __name__ == "__main__":
 
   tokens = getTokens(filename)
 
-  for (tok in tokens):
-    res = geonames.find_one({'1': re.compile(tok, re.IGNORECASE)})
-    print res
+  for tok in tokens:
+    print(tok)
+    res = geonames.find({'2': re.compile(".*"+tok+".*", re.IGNORECASE)})
+    for doc in res:
+      print(doc)
+    print("----------------------")
   
   
 

@@ -75,7 +75,9 @@ if __name__ == "__main__":
     for line in infile:
         location = buildLocation(line)
         loc_id = geonames.insert_one(location) .inserted_id      
-        print(loc_id)
+        #print(loc_id)
+
+  print("DONE!!!")
 
   
 
