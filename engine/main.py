@@ -46,9 +46,7 @@ def getTokensFromFile(filename):
   # Read the text
   text = utils.readTextFromFile(filename)
 
-  # Split by sentences
-  sentences = sent_tokenize(text)
-  utils.writeListToFile("%s\\sentences.txt" % OUTPUT_DIR, sentences)
+  
 
   # Get english dictionary from the enchant file
   d = enchant.Dict("en_US")
@@ -74,6 +72,17 @@ def getTokensFromFile(filename):
   utils.writeListToFile('%s\\tokens.txt' % OUTPUT_DIR, tokens)
 
   return tokens
+
+def getSentences(text):
+  # Split by sentences
+  sentences = sent_tokenize(text)
+  utils.writeListToFile("%s\\sentences.txt" % OUTPUT_DIR, sentences)
+  return sentences
+
+def getSequences(sentence):
+  # ([A-Z][a-z]+(?=\s[A-Z])(?:\s[A-Z][a-z]+)+)
+  return re.findall('([A-Z][a-z]+(?=\s[A-Z])(?:\s[A-Z][a-z]+)+)', sentence)
+
 
 
 # NLTK
@@ -113,6 +122,18 @@ if __name__ == "__main__":
   print ("Engine running on file %s" % filename)
 
   init()
+
+  text = utils.readTextFromFile(filename)
+
+  sentences = getSentences(text)
+
+  sequences = []
+  for sentence in sentences:
+    sequences.append(getSequences(sentence))
+
+  utils.writeListToFile('%s\\sequences.txt' % OUTPUT_DIR, sequences)
+
+  sys.exit(0)
 
   tokens = getTokensFromFile(filename)
 
