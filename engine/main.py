@@ -9,6 +9,7 @@ import enchant
 import pymongo
 import operator
 import json
+from bson.json_util import dumps
 
 # Geodeck imports
 import utils
@@ -23,7 +24,7 @@ OUTPUT_DIR = "output"
 #Globals
 g_english_words_webster = []
 g_monogoClient = None
-g_geonamesDB = None
+g_geonames = None
 
 
 # Naive algorithms
@@ -73,15 +74,17 @@ def checkLocation(token):
 def init():
   global g_english_words_webster
   global g_monogoClient
-  global g_geonamesDB
+  global g_db
   global g_enchantDict
+  global g_geodatasource_cities
+  global g_geodatasource_countries
 
   # Initialize MongoDB connection
   g_monogoClient = MongoClient()
-  db = g_monogoClient.geodeck
-  geonames = db.geonames
+  g_db = g_monogoClient.geodeck
 
-  geonames.createIndex([('1', pymongo.ASCENDING)])
+  # TODO: Move all db initizlisations to one place
+  #g_geonames.create_index([('1', pymongo.ASCENDING)])
 
   # Initialize enchant dictionary
   g_enchantDict = enchant.Dict("en_US")
@@ -92,7 +95,25 @@ def init():
     g_english_words_webster = set(list(file_data))
     print("Webster dictionary initialized:" + str(len(g_english_words_webster)))
 
-  
+
+def analyze_geonames(db, ta, token):
+  geonames = db.geonames
+  #Resolve using geonames
+  ta["meta"]["geonames"] = {}
+
+  # Execute precise matches first
+  ta["meta"]["geonames"]["precise_searches"] = []
+  res = geonames.find({'1': re.compile("^"+token[0]+"$", re.IGNORECASE) } )
+  for doc in res:
+    ta["meta"]["geonames"]["precise_searches"].append(doc)
+
+  # If no precise matches, use partial matches
+  if len(ta["meta"]["geonames"]["precise_searches"]) == 0:
+    ta["meta"]["geonames"]["searches"] = []
+    res = geonames.find({'1': re.compile(".*"+token[0]+".*", re.IGNORECASE) } )
+    for doc in res:
+      ta["meta"]["geonames"]["searches"].append(doc)
+
 # MAIN
 if __name__ == "__main__":
 
@@ -147,10 +168,61 @@ if __name__ == "__main__":
   token_analysis = []
 
   for token in sorted_tokens.items():
+    # Create a dictionary for analyzed token
     ta = {"token" : token[0], "freq" : token[1]}
 
     # Calculate weight
     ta["weight"] = ta["freq"] / len(sorted_tokens)
+
+    # Only look up most popular tokens
+    if ta["weight"] > 0.1:
+
+      # Resolve all metadata
+      ta["meta"] = {}
+
+      # ######################################################
+      #analyze_geonames(g_db, ta, token)
+
+      # ######################################################
+      #Resolve using geodatasource 
+      
+      g_geodatasource_cities = g_db.geodatasource_cities
+      g_geodatasource_countries = g_db.geodatasource_countries
+
+      ta["meta"]["geodatasource"] = {}
+
+      # Country first
+      ta["meta"]["geodatasource"]["country"] = {}
+
+      # Execute precise matches first
+      ta["meta"]["geodatasource"]["country"]["precise_searches"] = []
+      res = g_geodatasource_countries.find({'name': re.compile("^"+token[0]+"$", re.IGNORECASE) } )
+      for doc in res:
+        ta["meta"]["geodatasource"]["country"]["precise_searches"].append(doc)
+
+      # If no precise matches, use partial matches
+      if len(ta["meta"]["geodatasource"]["country"]["precise_searches"]) == 0:
+        ta["meta"]["geodatasource"]["country"]["searches"] = []
+        res = g_geodatasource_countries.find({'name': re.compile(".*"+token[0]+".*", re.IGNORECASE) } )
+        for doc in res:
+          ta["meta"]["geodatasource"]["country"]["searches"].append(doc)
+
+      # Country first
+      ta["meta"]["geodatasource"]["city"] = {}
+
+      # Execute precise matches first
+      ta["meta"]["geodatasource"]["city"]["precise_searches"] = []
+      res = g_geodatasource_cities.find({'name': re.compile("^"+token[0]+"$", re.IGNORECASE) } )
+      for doc in res:
+        ta["meta"]["geodatasource"]["city"]["precise_searches"].append(doc)
+
+      # If no precise matches, use partial matches
+      if len(ta["meta"]["geodatasource"]["city"]["precise_searches"]) == 0:
+        ta["meta"]["geodatasource"]["city"]["searches"] = []
+        res = g_geodatasource_cities.find({'name': re.compile(".*"+token[0]+".*", re.IGNORECASE) } )
+        for doc in res:
+          ta["meta"]["geodatasource"]["city"]["searches"].append(doc)
+
 
     # Check in which senteces appears (TODO)
 
@@ -172,7 +244,7 @@ if __name__ == "__main__":
   #   print("----------------------")
 
   with open('%s\\result.json' % OUTPUT_DIR, 'w', encoding="utf-8") as fp:
-    json.dump(result, fp)
+    fp.write(dumps(result))
 
   print("Analysis complete")
   
