@@ -194,11 +194,16 @@ if __name__ == "__main__":
       # Country first
       ta["meta"]["geodatasource"]["country"] = {}
 
+      is_country = False
+
       # Execute precise matches first
       ta["meta"]["geodatasource"]["country"]["precise_searches"] = []
       res = g_geodatasource_countries.find({'name': re.compile("^"+token[0]+"$", re.IGNORECASE) } )
-      for doc in res:
-        ta["meta"]["geodatasource"]["country"]["precise_searches"].append(doc)
+      if (res.count() > 0):
+        is_country = True
+        print("Got country: " + token[0])
+        for doc in res:
+          ta["meta"]["geodatasource"]["country"]["precise_searches"].append(doc)
 
       # If no precise matches, use partial matches
       if len(ta["meta"]["geodatasource"]["country"]["precise_searches"]) == 0:
@@ -207,21 +212,24 @@ if __name__ == "__main__":
         for doc in res:
           ta["meta"]["geodatasource"]["country"]["searches"].append(doc)
 
-      # Country first
-      ta["meta"]["geodatasource"]["city"] = {}
+      if not is_country:
+        # City  second
+        ta["meta"]["geodatasource"]["city"] = {}
 
-      # Execute precise matches first
-      ta["meta"]["geodatasource"]["city"]["precise_searches"] = []
-      res = g_geodatasource_cities.find({'name': re.compile("^"+token[0]+"$", re.IGNORECASE) } )
-      for doc in res:
-        ta["meta"]["geodatasource"]["city"]["precise_searches"].append(doc)
+        # Execute precise matches first
+        ta["meta"]["geodatasource"]["city"]["precise_searches"] = []
+        res = g_geodatasource_cities.find({'name': re.compile("^"+token[0]+"$", re.IGNORECASE) } )
+        if (res.count() > 0):
+          print("Got city: " + token[0])
+          for doc in res:
+            ta["meta"]["geodatasource"]["city"]["precise_searches"].append(doc)
 
-      # If no precise matches, use partial matches
-      if len(ta["meta"]["geodatasource"]["city"]["precise_searches"]) == 0:
-        ta["meta"]["geodatasource"]["city"]["searches"] = []
-        res = g_geodatasource_cities.find({'name': re.compile(".*"+token[0]+".*", re.IGNORECASE) } )
-        for doc in res:
-          ta["meta"]["geodatasource"]["city"]["searches"].append(doc)
+        # If no precise matches, use partial matches
+        if len(ta["meta"]["geodatasource"]["city"]["precise_searches"]) == 0:
+          ta["meta"]["geodatasource"]["city"]["searches"] = []
+          res = g_geodatasource_cities.find({'name': re.compile(".*"+token[0]+".*", re.IGNORECASE) } )
+          for doc in res:
+            ta["meta"]["geodatasource"]["city"]["searches"].append(doc)
 
 
     # Check in which senteces appears (TODO)
