@@ -36,40 +36,17 @@ def naive_extractEntities(text):
         entities.append(word)
   return entities
 
-def getTokensFromFile(filename):
-  text = utils.readTextFromFile(filename)
-
-  entities = nltk_extractEntities(text)
-
-  utils.writeListToFile('%s\\entities.txt' % OUTPUT_DIR, entities)
-
-  # Read the text
-  text = utils.readTextFromFile(filename)
-
+def getTokensFromText(text):
   
-
-  # Get english dictionary from the enchant file
-  d = enchant.Dict("en_US")
-
-  print("Dictionary tests")
-  print(d.check("Amsterdam"))
-
+  tokens = nltk.word_tokenize(text)  
   # Token filtering
-  tokens = text.split()
-
-  print("Start from %s tokens" % str(len(tokens)))
+  #tokens = text.split()
 
   # First level, strip webster words
   tokens = [tok.strip().strip(":,;.!@#$%^&*()") for tok in text.split() if tok[0].isupper() and not (tok.upper() in g_english_words_webster)]
 
-  print("%s tokens, after first filter" % str(len(tokens)))
-
   # Second level, filter with enchant
-  tokens = [tok for tok in tokens if not d.check(tok.lower())]
-
-  print("%s tokens, after second filter" % str(len(tokens)))
-  
-  utils.writeListToFile('%s\\tokens.txt' % OUTPUT_DIR, tokens)
+  tokens = [tok for tok in tokens if not g_enchantDict.check(tok.lower())]
 
   return tokens
 
@@ -80,10 +57,9 @@ def getSentences(text):
   return sentences
 
 def getSequences(sentence):
-  # ([A-Z][a-z]+(?=\s[A-Z])(?:\s[A-Z][a-z]+)+)
-  return re.findall('([A-Z][a-z]+(?=\s[A-Z])(?:\s[A-Z][a-z]+)+)', sentence)
-
-
+  # TODO: Improve this regex, or replace with code, to handle cases like: 
+  # Grand Cathedral of Lalala
+  return re.findall('([A-Z][a-z]+(?=\s[A-Z]*)(?:\s[A-Z][a-z]+)+)', sentence)
 
 # NLTK
 def nltk_extractEntities(text):
@@ -98,10 +74,17 @@ def init():
   global g_english_words_webster
   global g_monogoClient
   global g_geonamesDB
+  global g_enchantDict
 
+  # Initialize MongoDB connection
   g_monogoClient = MongoClient()
   db = g_monogoClient.geodeck
-  g_geonamesDB = db.geonames
+  geonames = db.geonames
+
+  geonames.createIndex([('1', pymongo.ASCENDING)])
+
+  # Initialize enchant dictionary
+  g_enchantDict = enchant.Dict("en_US")
 
   # Initialize set of english words
   with open('data\\webster_words.json') as data_file:    
@@ -123,28 +106,60 @@ if __name__ == "__main__":
 
   init()
 
+  # Read the text (from file this time)
   text = utils.readTextFromFile(filename)
 
+  # Tokenize into sentences
   sentences = getSentences(text)
 
-  sequences = []
-  for sentence in sentences:
-    sequences.append(getSequences(sentence))
+  # Create dictionary which will hold the analysis result
+  result = {"filename" : filename}
+  sentence_results = []
+  allTokens = []
 
-  utils.writeListToFile('%s\\sequences.txt' % OUTPUT_DIR, sequences)
+  # Analyze each centence separately
+  for  idx, sentence in enumerate(sentences):
+    # Initialize metadata dictionary which will hold the result of the analysis
+    meta = {"sentence" : sentence, "idx" : idx}
+    sequences = getSequences(sentence)
 
-  sys.exit(0)
+    # Remove the sequences we have found (TODO: optimize this)
 
-  tokens = getTokensFromFile(filename)
+    for sequence in sequences:
+      sentence = sentence.replace(sequence, "")
 
-  print("Got %s tokens" % len(tokens))
+    tokens = getTokensFromText(sentence)
+
+    tokens = sequences + tokens
+    meta["tokens"] = tokens
+    allTokens = allTokens + tokens
+
+    sentence_results.append(meta)
+
+  result["sentences"] = sentence_results
 
   # Measure token frequency
-  distances = []
-  token_freq=nltk.FreqDist(tokens)
+  token_freq=nltk.FreqDist(allTokens)
+  sorted_tokens = OrderedDict(sorted(token_freq.items(), key=lambda t: t[1]))
 
-  sorted_token_freq = OrderedDict(sorted(token_freq.items(), key=lambda t: t[1]))
-  utils.writeDictToFile("%s\\distances.txt" % OUTPUT_DIR, sorted_token_freq)
+
+
+  token_analysis = []
+
+  for token in sorted_tokens.items():
+    ta = {"token" : token[0], "freq" : token[1]}
+
+    # Calculate weight
+    ta["weight"] = ta["freq"] / len(sorted_tokens)
+
+    # Check in which senteces appears (TODO)
+
+    # Check if a names of a city or country
+
+
+    token_analysis.append(ta)
+  
+  result["tokens"] = token_analysis
 
   # Connect to the geonames db
   
@@ -155,6 +170,9 @@ if __name__ == "__main__":
   #   for doc in res:
   #     print(doc)
   #   print("----------------------")
+
+  with open('%s\\result.json' % OUTPUT_DIR, 'w', encoding="utf-8") as fp:
+    json.dump(result, fp)
 
   print("Analysis complete")
   
