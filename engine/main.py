@@ -11,8 +11,11 @@ import operator
 import json
 from bson.json_util import dumps
 
+import dpath
+
 # Geodeck imports
 import utils
+from timer import Timer
 
 # Partial imports
 from collections import OrderedDict
@@ -54,7 +57,7 @@ def getTokensFromText(text):
 def getSentences(text):
   # Split by sentences
   sentences = sent_tokenize(text)
-  utils.writeListToFile("%s\\sentences.txt" % OUTPUT_DIR, sentences)
+  utils.writeListToFile("%s/sentences.txt" % OUTPUT_DIR, sentences)
   return sentences
 
 def getSequences(sentence):
@@ -90,29 +93,46 @@ def init():
   g_enchantDict = enchant.Dict("en_US")
 
   # Initialize set of english words
-  with open('data\\webster_words.json') as data_file:    
+  
+  with open('data/webster_words.json') as data_file:    
     file_data = json.load(data_file)
     g_english_words_webster = set(list(file_data))
     print("Webster dictionary initialized:" + str(len(g_english_words_webster)))
 
+def resolve_geodatasource(db, ta, token):
+    #Resolve using geodatasource 
+  res = g_db.g_geodatasource_countries.find({'name': re.compile("^"+token[0]+"$", re.IGNORECASE) } )
+  if (res.count() > 0):
+    utils.addMetadata(ta, ["geodatasource", "precise"], "country", list(res))
+  else:
+    res = g_db.g_geodatasource_countries.find({'name': re.compile(".*"+token[0]+".*", re.IGNORECASE) } )
+    if (res.count() > 0):
+      utils.addMetadata(ta, ["geodatasource", "contains"], "country", list(res))
 
-def analyze_geonames(db, ta, token):
-  geonames = db.geonames
-  #Resolve using geonames
-  ta["meta"]["geonames"] = {}
 
-  # Execute precise matches first
-  ta["meta"]["geonames"]["precise_searches"] = []
-  res = geonames.find({'1': re.compile("^"+token[0]+"$", re.IGNORECASE) } )
-  for doc in res:
-    ta["meta"]["geonames"]["precise_searches"].append(doc)
+  res = g_db.g_geodatasource_cities.find({'name': re.compile("^"+token[0]+"$", re.IGNORECASE) } )
+  if (res.count() > 0):
+    utils.addMetadata(ta, ["geodatasource", "precise"], "city", list(res))
+  else:
+    res = g_db.g_geodatasource_cities.find({'name': re.compile(".*"+token[0]+".*", re.IGNORECASE) } )
+    if (res.count() > 0):
+      utils.addMetadata(ta, ["geodatasource", "contains"], "city", list(res))
 
-  # If no precise matches, use partial matches
-  if len(ta["meta"]["geonames"]["precise_searches"]) == 0:
-    ta["meta"]["geonames"]["searches"] = []
-    res = geonames.find({'1': re.compile(".*"+token[0]+".*", re.IGNORECASE) } )
-    for doc in res:
-      ta["meta"]["geonames"]["searches"].append(doc)
+
+def resolve_geonames(db, ta):
+  # TODO: Verify ta is valid, has token, meta etc...
+  token = ta["token"]
+  print("Geonames::resolve: %s" % token)
+  with Timer() as t:
+    res = db.geonames.find({'1': re.compile("^"+token+"$", re.IGNORECASE) } )
+    if res.count() > 0:
+      utils.addMetadata(ta, [], "geonames", list(res))
+    else:
+      res = db.geonames.find({'1': re.compile(".*"+token+".*", re.IGNORECASE) } )
+      if res.count() > 0:
+        utils.addMetadata(ta, [], "geonames", list(res))
+  print("Geonames, resolved: %s in %s" % (token, t.secs))
+    
 
 # MAIN
 if __name__ == "__main__":
@@ -169,68 +189,14 @@ if __name__ == "__main__":
 
   for token in sorted_tokens.items():
     # Create a dictionary for analyzed token
-    ta = {"token" : token[0], "freq" : token[1]}
+    ta = {"token" : token[0], "freq" : token[1], "weight" : token[1] / len(sorted_tokens), "meta" : {}}
+    
+    # Resolvers
+    # ######################################################
+    resolve_geonames(g_db, ta)
+    #resolve_geodatasource(g_db, ta, token)
 
-    # Calculate weight
-    ta["weight"] = ta["freq"] / len(sorted_tokens)
-
-    # Only look up most popular tokens
-    if ta["weight"] > 0.1:
-
-      # Resolve all metadata
-      ta["meta"] = {}
-
-      # ######################################################
-      #analyze_geonames(g_db, ta, token)
-
-      # ######################################################
-      #Resolve using geodatasource 
-      
-      g_geodatasource_cities = g_db.geodatasource_cities
-      g_geodatasource_countries = g_db.geodatasource_countries
-
-      ta["meta"]["geodatasource"] = {}
-
-      # Country first
-      ta["meta"]["geodatasource"]["country"] = {}
-
-      is_country = False
-
-      # Execute precise matches first
-      ta["meta"]["geodatasource"]["country"]["precise_searches"] = []
-      res = g_geodatasource_countries.find({'name': re.compile("^"+token[0]+"$", re.IGNORECASE) } )
-      if (res.count() > 0):
-        is_country = True
-        print("Got country: " + token[0])
-        for doc in res:
-          ta["meta"]["geodatasource"]["country"]["precise_searches"].append(doc)
-
-      # If no precise matches, use partial matches
-      if len(ta["meta"]["geodatasource"]["country"]["precise_searches"]) == 0:
-        ta["meta"]["geodatasource"]["country"]["searches"] = []
-        res = g_geodatasource_countries.find({'name': re.compile(".*"+token[0]+".*", re.IGNORECASE) } )
-        for doc in res:
-          ta["meta"]["geodatasource"]["country"]["searches"].append(doc)
-
-      if not is_country:
-        # City  second
-        ta["meta"]["geodatasource"]["city"] = {}
-
-        # Execute precise matches first
-        ta["meta"]["geodatasource"]["city"]["precise_searches"] = []
-        res = g_geodatasource_cities.find({'name': re.compile("^"+token[0]+"$", re.IGNORECASE) } )
-        if (res.count() > 0):
-          print("Got city: " + token[0])
-          for doc in res:
-            ta["meta"]["geodatasource"]["city"]["precise_searches"].append(doc)
-
-        # If no precise matches, use partial matches
-        if len(ta["meta"]["geodatasource"]["city"]["precise_searches"]) == 0:
-          ta["meta"]["geodatasource"]["city"]["searches"] = []
-          res = g_geodatasource_cities.find({'name': re.compile(".*"+token[0]+".*", re.IGNORECASE) } )
-          for doc in res:
-            ta["meta"]["geodatasource"]["city"]["searches"].append(doc)
-
+    # ######################################################
 
     # Check in which senteces appears (TODO)
 
@@ -241,17 +207,7 @@ if __name__ == "__main__":
   
   result["tokens"] = token_analysis
 
-  # Connect to the geonames db
-  
-
-  # for tok in tokens:
-  #   print(tok)
-  #   res = geonames.find({'2': re.compile(".*"+tok+".*", re.IGNORECASE)})
-  #   for doc in res:
-  #     print(doc)
-  #   print("----------------------")
-
-  with open('%s\\result.json' % OUTPUT_DIR, 'w', encoding="utf-8") as fp:
+  with open('%s/result.json' % OUTPUT_DIR, 'w', encoding="utf-8") as fp:
     fp.write(dumps(result))
 
   print("Analysis complete")
