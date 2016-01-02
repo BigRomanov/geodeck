@@ -1,1 +1,76 @@
-{"tokens": [{"weight": 0.023255813953488372, "token": "Oct", "freq": 1}, {"weight": 0.023255813953488372, "token": "Universal Studios Florida", "freq": 1}, {"weight": 0.023255813953488372, "token": "Kong", "freq": 1}, {"weight": 0.023255813953488372, "token": "Director Steven Spielberg", "freq": 1}, {"weight": 0.023255813953488372, "token": "Skift Take", "freq": 1}, {"weight": 0.023255813953488372, "token": "Los Angeles", "freq": 1}, {"weight": 0.023255813953488372, "token": "The Associated Press", "freq": 1}, {"weight": 0.023255813953488372, "token": "Kyle Hightower", "freq": 1}, {"weight": 0.023255813953488372, "token": "The Wizarding World", "freq": 1}, {"weight": 0.023255813953488372, "token": "John Raoux", "freq": 1}, {"weight": 0.023255813953488372, "token": "Jason Clampet", "freq": 1}, {"weight": 0.023255813953488372, "token": "The Harry Potter", "freq": 1}, {"weight": 0.023255813953488372, "token": "The Hollywood", "freq": 1}, {"weight": 0.023255813953488372, "token": "Universal Studios Hollywood", "freq": 1}, {"weight": 0.023255813953488372, "token": "Fla", "freq": 1}, {"weight": 0.023255813953488372, "token": "Comcast\u2019s", "freq": 1}, {"weight": 0.023255813953488372, "token": "October", "freq": 1}, {"weight": 0.023255813953488372, "token": "Furious-Supercharged", "freq": 1}, {"weight": 0.023255813953488372, "token": "Photo/", "freq": 1}, {"weight": 0.023255813953488372, "token": "Universal Orlando Resort", "freq": 1}, {"weight": 0.023255813953488372, "token": "Chick Russell", "freq": 1}, {"weight": 0.023255813953488372, "token": "Jason Surrell", "freq": 1}, {"weight": 0.023255813953488372, "token": "Diagon Alley", "freq": 1}, {"weight": 0.023255813953488372, "token": "Wizarding World", "freq": 1}, {"weight": 0.023255813953488372, "token": "The City", "freq": 1}, {"weight": 0.023255813953488372, "token": "Skull Island", "freq": 1}, {"weight": 0.023255813953488372, "token": "Russell", "freq": 1}, {"weight": 0.023255813953488372, "token": "Thursday", "freq": 1}, {"weight": 0.023255813953488372, "token": "Volcano Bay", "freq": 1}, {"weight": 0.023255813953488372, "token": "NewsCred", "freq": 1}, {"weight": 0.023255813953488372, "token": "King Kong", "freq": 1}, {"weight": 0.023255813953488372, "token": "NBCUniversal", "freq": 1}, {"weight": 0.023255813953488372, "token": "Universal Studios", "freq": 1}, {"weight": 0.046511627906976744, "token": "Orlando", "freq": 2}, {"weight": 0.046511627906976744, "token": "E.T", "freq": 2}, {"weight": 0.046511627906976744, "token": "Associated Press", "freq": 2}, {"weight": 0.046511627906976744, "token": "Universal Creative", "freq": 2}, {"weight": 0.046511627906976744, "token": "Surrell", "freq": 2}, {"weight": 0.06976744186046512, "token": "Florida", "freq": 3}, {"weight": 0.06976744186046512, "token": "California", "freq": 3}, {"weight": 0.06976744186046512, "token": "Hollywood", "freq": 3}, {"weight": 0.06976744186046512, "token": "Harry Potter", "freq": 3}, {"weight": 0.09302325581395349, "token": "Universal Orlando", "freq": 4}], "filename": "sample\\8.txt", "sentences": [{"sentence": " \n\nIn this Thursday, Oct. 22, 2015 photo, park guests relax in the shade of rotating globe at Universal Studios in Orlando, Fla.", "idx": 0, "tokens": ["Universal Studios", "Thursday", "Oct", "Orlando", "Fla"]}, {"sentence": "In the last 25 years, Universal Orlando has emerged from the shadow of its older sister park to forge its own identity celebrating the entertainment industry.", "idx": 1, "tokens": ["Universal Orlando"]}, {"sentence": "(AP Photo/John Raoux) Associated Press\n\n\n\nSkift Take: It's doubtful we'd be talking much at all about Universal if it wasn't for the park's risky Harry Potter gamble that paid off huge.", "idx": 2, "tokens": ["John Raoux", "Associated Press", "Skift Take", "Harry Potter", "Photo/"]}, {"sentence": "\u2014 Jason Clampet\n\nWhen the Universal Orlando theme park opened in 1990, it was a way for visitors to have fun inspired by the movies they loved \u2014 without traveling to California.", "idx": 3, "tokens": ["Jason Clampet", "Universal Orlando", "California"]}, {"sentence": "Director Steven Spielberg held the scissors at the ribbon-cutting.", "idx": 4, "tokens": ["Director Steven Spielberg"]}, {"sentence": "One of the first rides was themed on his movie \u201cE.T.\u201d Even ads for the park had the tone of a movie-quality teaser, promising the \u201cgreatest Hollywood production ever.\u201d\n\nJason Surrell, creative director at Universal Creative, saw that ad while still in college.", "idx": 5, "tokens": ["Jason Surrell", "Universal Creative", "Hollywood"]}, {"sentence": "\u201cThis is one of the reasons I moved down to Florida because at the time I knew it was becoming Hollywood east,\u201d he said.", "idx": 6, "tokens": ["Florida", "Hollywood"]}, {"sentence": "One thing the new Florida park couldn\u2019t do was show visitors the authentic Hollywood backlots in Los Angeles where Universal has made movies for over a century.", "idx": 7, "tokens": ["Los Angeles", "Florida", "Hollywood"]}, {"sentence": "Those backlot tours remain a staple of the company\u2019s first theme park, Universal Studios Hollywood, which opened in 1964.", "idx": 8, "tokens": ["Universal Studios Hollywood"]}, {"sentence": "But in the last 25 years, Universal Orlando has emerged from the shadow of its older sister park to forge its own identity celebrating the entertainment industry.", "idx": 9, "tokens": ["Universal Orlando"]}, {"sentence": "It\u2019s built thrilling roller coasters, incorporated the latest interactive technology into rides and in 2010 opened one of the most successful attractions in theme park history, The Wizarding World of Harry Potter, with a second Potter area added in 2014.", "idx": 10, "tokens": ["The Wizarding World", "Harry Potter"]}, {"sentence": "It\u2019s also grown from a single theme park, the original Universal Studios Florida, to two, with the opening of Islands of Adventure in 1999.", "idx": 11, "tokens": ["Universal Studios Florida"]}, {"sentence": "That\u2019s when the complex was renamed Universal Orlando Resort.", "idx": 12, "tokens": ["Universal Orlando Resort"]}, {"sentence": "The CityWalk dining and entertainment area was added that year as well.", "idx": 13, "tokens": ["The City"]}, {"sentence": "Today there are also four hotels, with 18 new attractions and experiences added in the last five years.", "idx": 14, "tokens": []}, {"sentence": "Growth through 2017 includes the new Skull Island: Reign of Kong attraction, themed on King Kong, along with another hotel and a new water theme park, Volcano Bay.", "idx": 15, "tokens": ["Skull Island", "King Kong", "Volcano Bay", "Kong"]}, {"sentence": "Both the Orlando and California parks had record attendance this past summer, thanks to the Potter attractions in Florida and the Fast & Furious-Supercharged ride in California.", "idx": 16, "tokens": ["Orlando", "California", "Florida", "Furious-Supercharged", "California"]}, {"sentence": "Comcast\u2019s NBCUniversal division, which owns the Universal theme parks, said in October that its parks division generated $896 million in revenue for the third quarter.", "idx": 17, "tokens": ["Comcast\u2019s", "NBCUniversal", "October"]}, {"sentence": "The Hollywood park will open its own Wizarding World of Harry Potter in 2016.", "idx": 18, "tokens": ["The Hollywood", "Wizarding World", "Harry Potter"]}, {"sentence": "One thing that\u2019s defined Universal Orlando\u2019s rides since the beginning is an emphasis on the latest technology, said Chick Russell, a Universal Creative director and executive producer who\u2019s worked on the Potter attractions and others.", "idx": 19, "tokens": ["Universal Orlando", "Chick Russell", "Universal Creative"]}, {"sentence": "Even in the park\u2019s early days, the E.T.", "idx": 20, "tokens": ["E.T"]}, {"sentence": "Adventure ride invited patrons to tell the host their names at the beginning of the ride, and a robotic E.T.", "idx": 21, "tokens": ["E.T"]}, {"sentence": "would repeat the names later.", "idx": 22, "tokens": []}, {"sentence": "\u201cThat was a pretty advanced thing to do 25 years ago,\u201d Surrell said.", "idx": 23, "tokens": ["Surrell"]}, {"sentence": "In 1996, the Terminator 2: 3-D attraction opened, bringing 3-D effects and live-action actors to the park.", "idx": 24, "tokens": []}, {"sentence": "More recent rides, like those inspired by \u201cSpider-Man\u201d and \u201cTransformers\u201d movies, \u201ccreate the illusion of speed and the excitement you wish you could live when you see the films,\u201d Russell said.", "idx": 25, "tokens": ["Russell"]}, {"sentence": "The Harry Potter attractions offer an even more immersive experience, wrapping guests into a realistically detailed fictional world the minute they step into Diagon Alley.", "idx": 26, "tokens": ["The Harry Potter", "Diagon Alley"]}, {"sentence": "It\u2019s a trend Universal expects to continue in its next 25 years.", "idx": 27, "tokens": []}, {"sentence": "\u201cIt feels like we\u2019ve evolved from riding the movies to living the movies,\u201d Surrell said.", "idx": 28, "tokens": ["Surrell"]}, {"sentence": "\u201cIt\u2019s really about putting people right square in the middle of the action.\u201d\n\nCopyright (2015) Associated Press.", "idx": 29, "tokens": ["Associated Press"]}, {"sentence": "All rights reserved.", "idx": 30, "tokens": []}, {"sentence": "This material may not be published, broadcast, rewritten, or redistributed.", "idx": 31, "tokens": []}, {"sentence": "This article was written by Kyle Hightower from The Associated Press and was legally licensed through the NewsCred publisher network.\n\n \n\n", "idx": 32, "tokens": ["Kyle Hightower", "The Associated Press", "NewsCred"]}]}
+{
+  "sentences": [{
+    "idx": 0,
+    "tokens": ["Waldorf Astoria New York"],
+    "sentence": " \n\nThe Waldorf Astoria New York is one of a dozen hotels in the city promising to cut emissions."
+  }, {
+    "idx": 1,
+    "tokens": ["'ve", "Skift Take"],
+    "sentence": "Associated Press\n\n\n\nSkift Take: As far as we've seen, the vast majority of hotel guests are ambivalent at best about their environmental impact."
+  }, {
+    "idx": 2,
+    "tokens": ["'s"],
+    "sentence": "For hotels, a move like this needs to be because they think it's the right thing to do."
+  }, {
+    "idx": 3,
+    "tokens": ["\u2019s", "Jason Clampet", "New York City"],
+    "sentence": "\u2014 Jason Clampet\n\nMore than a dozen of New York City\u2019s most famed hotels are pledging to get greener."
+  }, {
+    "idx": 4,
+    "tokens": ["Waldorf-", "Pierre-A", "Astoria New York", "Lotte New York Palace", "Taj Hotel", "Crowne Plaza Times Square", "New York"],
+    "sentence": "The Waldorf-Astoria New York, the Lotte New York Palace, the Pierre-A Taj Hotel and the Crowne Plaza Times Square are among the 16 city hotels \u2014 all currently thronged with tourists visiting New York for the holidays \u2014 whose owners have agreed to cut greenhouse gases from their buildings by 30 percent or more in the next decade."
+  }, {
+    "idx": 5,
+    "tokens": ["de", "Blasio\u2019s", "NYC", "hotels\u2019", "Carbon Challenge", "The Associated Press"],
+    "sentence": "Mayor Bill de Blasio\u2019s office is spearheading the NYC Carbon Challenge program, and will announce the hotels\u2019 commitment on Tuesday, his aides told The Associated Press on Monday."
+  }, {
+    "idx": 6,
+    "tokens": ["\u201cIf", "\u2019s", "New York"],
+    "sentence": "\u201cIf some of New York\u2019s most iconic hotels can significantly reduce their carbon footprint, anyone can,\u201d the mayor said in a statement."
+  }, {
+    "idx": 7,
+    "tokens": ["York", "nation\u2019s", "mayor\u2019s"],
+    "sentence": "New York is one of the nation\u2019s leading tourist attractions \u2014 56.5 million people visited in 2014 \u2014 and administration officials believe the famed hotels are a powerful billboard for the mayor\u2019s environmental program."
+  }, {
+    "idx": 8,
+    "tokens": ["\u2019s", "Carbon Challenge", "City Hall"],
+    "sentence": "The so-called Carbon Challenge is part of City Hall\u2019s ambitious plan to reduce all citywide greenhouse gases 80 percent by 2050."
+  }, {
+    "idx": 9,
+    "tokens": ["Grand Hyatt New York", "Westin New York", "Times Square", "The Peninsula New York"],
+    "sentence": "The expansion to the 16 hotels \u2014 which also include the Grand Hyatt New York, the Westin New York at TimesSquare and The Peninsula New York among others \u2014 is estimated to reduce emissions by 32,000 metric tons and result in an estimated $25 million in energy cost savings."
+  }, {
+    "idx": 10,
+    "tokens": ["high-profile"],
+    "sentence": "Environmental advocates largely praised the move, suggesting that enlisting a few high-profile structures to the cause could spur others to join."
+  }, {
+    "idx": 11,
+    "tokens": ["\u201cAs", "nation\u2019s", "Herv\u00e9", "Houdr\u00e9", "Continental New York Barclay"],
+    "sentence": "\u201cAs the nation\u2019s number one big city destination, the hotels are showing the rest of the world that our city is committed to reducing our carbon emissions and fighting climate change,\u201d said Herv\u00e9 Houdr\u00e9, general manager of the InterContinental New York Barclay."
+  }, {
+    "idx": 12,
+    "tokens": ["building-based", "mayor\u2019s"],
+    "sentence": "City officials said that more than 17 universities, 11 hospitals and nearly 20 residential property management companies \u2014 combining for nearly 7 percent of citywide building-based emissions \u2014 have already signed on to the mayor\u2019s program."
+  }, {
+    "idx": 13,
+    "tokens": [],
+    "sentence": "Officials estimate that the program overall will reduce greenhouse gas emissions by 515,000 metric tons \u2014 the equivalent of taking 100,000 cars off the roads."
+  }, {
+    "idx": 14,
+    "tokens": ["Associated Press"],
+    "sentence": "Copyright (2015) Associated Press."
+  }, {
+    "idx": 15,
+    "tokens": [],
+    "sentence": "All rights reserved."
+  }, {
+    "idx": 16,
+    "tokens": [],
+    "sentence": "This material may not be published, broadcast, rewritten, or redistributed."
+  }, {
+    "idx": 17,
+    "tokens": ["NewsCred", "Jonathan Lemire", "The Associated Press"],
+    "sentence": "This article was written by Jonathan Lemire from The Associated Press and was legally licensed through the NewsCred publisher network.\n\n \n\n"
+  }],
+  "filename": "sample/7.txt"
+}

@@ -40,19 +40,44 @@ def naive_extractEntities(text):
         entities.append(word)
   return entities
 
-def getTokensFromText(text):
+def isDicWord(word):
+  word = word.strip(":,;.!@#$%^&*()\"\'")
+  return (word.upper() in g_english_words_webster) or (g_enchantDict.check(word.lower()))
+
+def hasLetters(word):
+  return re.search('[a-zA-Z]', word)
+
+
+def getTokensFromSentence(sentence):
+
+  _sentence = sentence # Save original
   
-  tokens = nltk.word_tokenize(text)  
-  # Token filtering
-  #tokens = text.split()
+  print("Sentence: %s " % sentence)
 
-  # First level, strip webster words
-  tokens = [tok.strip().strip(":,;.!@#$%^&*()") for tok in text.split() if tok[0].isupper() and not (tok.upper() in g_english_words_webster)]
+  cofcs = getPattern_CofC(sentence)
+  for sequence in cofcs:
+    sentence = sentence.replace(sequence, "")
 
-  # Second level, filter with enchant
-  tokens = [tok for tok in tokens if not g_enchantDict.check(tok.lower())]
+  print("Sentence, without cofcs : %s " % sentence)
+  
+  # Check first token, it will always be capitalized, remove if common word
+  _s = sentence.split(None,1)
+  if isDicWord(_s[0]):
+    sentence = _s[1]
 
-  return tokens
+  print("New Sentence: %s" % sentence)
+
+  # Handle patterns and sequences
+  sequences = getSequences(sentence)
+  for sequence in sequences:
+    sentence = sentence.replace(sequence, "")
+
+  # Process all other tokens
+  tokens = nltk.word_tokenize(sentence)  
+
+  tokens = [tok.strip().strip(":,;.!@#$%^&*()\"\'") for tok in tokens if (hasLetters(tok) and not isDicWord(tok))]
+
+  return tokens + cofcs + sequences
 
 def getSentences(text):
   # Split by sentences
@@ -64,6 +89,9 @@ def getSequences(sentence):
   # TODO: Improve this regex, or replace with code, to handle cases like: 
   # Grand Cathedral of Lalala
   return re.findall('([A-Z][a-z]+(?=\s[A-Z]*)(?:\s[A-Z][a-z]+)+)', sentence)
+
+def getPattern_CofC(sentence):
+  return re.findall('((?:[A-Z][a-z]+\s*)+\sof(?:\s[A-Z][a-z]+)+)', sentence)
 
 # NLTK
 def nltk_extractEntities(text):
@@ -86,11 +114,15 @@ def init():
   g_monogoClient = MongoClient()
   g_db = g_monogoClient.geodeck
 
-  # TODO: Move all db initizlisations to one place
+  # TODO: Move all db initialisations to one place
   #g_geonames.create_index([('1', pymongo.ASCENDING)])
 
   # Initialize enchant dictionary
   g_enchantDict = enchant.Dict("en_US")
+
+  g_place_types = ["bar", "hotel", "restaurant", "resort", "museum", "club"]
+
+  g_adjectives = ["fabulous", "glorious", "beautiful", "fantastic", "popular", "famous", "great"]
 
   # Initialize set of english words
   
@@ -99,40 +131,65 @@ def init():
     g_english_words_webster = set(list(file_data))
     print("Webster dictionary initialized:" + str(len(g_english_words_webster)))
 
-def resolve_geodatasource(db, ta, token):
-    #Resolve using geodatasource 
-  res = g_db.g_geodatasource_countries.find({'name': re.compile("^"+token[0]+"$", re.IGNORECASE) } )
+def resolve_geodatasource(db, ta):
+  token = ta["token"]
+  res = g_db.g_geodatasource_countries.find({'name': token} )
   if (res.count() > 0):
     utils.addMetadata(ta, ["geodatasource", "precise"], "country", list(res))
   else:
-    res = g_db.g_geodatasource_countries.find({'name': re.compile(".*"+token[0]+".*", re.IGNORECASE) } )
+    res = g_db.g_geodatasource_countries.find({'name': token} )
     if (res.count() > 0):
       utils.addMetadata(ta, ["geodatasource", "contains"], "country", list(res))
 
 
-  res = g_db.g_geodatasource_cities.find({'name': re.compile("^"+token[0]+"$", re.IGNORECASE) } )
+  res = g_db.g_geodatasource_cities.find({'name': token})
   if (res.count() > 0):
     utils.addMetadata(ta, ["geodatasource", "precise"], "city", list(res))
   else:
-    res = g_db.g_geodatasource_cities.find({'name': re.compile(".*"+token[0]+".*", re.IGNORECASE) } )
+    res = g_db.g_geodatasource_cities.find({'name': token} )
     if (res.count() > 0):
       utils.addMetadata(ta, ["geodatasource", "contains"], "city", list(res))
 
 
-def resolve_geonames(db, ta):
+def resolve_geonames(db, ta, use_regex=False):
   # TODO: Verify ta is valid, has token, meta etc...
   token = ta["token"]
   print("Geonames::resolve: %s" % token)
   with Timer() as t:
-    res = db.geonames.find({'1': re.compile("^"+token+"$", re.IGNORECASE) } )
+    res = db.geonames.find({'1': token } )
     if res.count() > 0:
       utils.addMetadata(ta, [], "geonames", list(res))
-    else:
-      res = db.geonames.find({'1': re.compile(".*"+token+".*", re.IGNORECASE) } )
+    elif use_regex:
+      res = db.geonames.find({'1': re.compile("^"+token+"$", re.IGNORECASE) } )
       if res.count() > 0:
         utils.addMetadata(ta, [], "geonames", list(res))
+      else:
+        res = db.geonames.find({'1': re.compile(".*"+token+".*", re.IGNORECASE) } )
+        if res.count() > 0:
+          utils.addMetadata(ta, [], "geonames", list(res))
   print("Geonames, resolved: %s in %s" % (token, t.secs))
     
+def analyzeTokens(sorted_tokens):
+  token_analysis = []
+
+  for token in sorted_tokens.items():
+    # Create a dictionary for analyzed token
+    ta = {"token" : token[0], "freq" : token[1], "weight" : token[1] / len(sorted_tokens), "meta" : {}}
+    
+    # Resolvers
+    # ######################################################
+    resolve_geonames(g_db, ta)
+    resolve_geodatasource(g_db, ta)
+
+    # ######################################################
+
+    # Check in which senteces appears (TODO)
+
+    # Check if a names of a city or country
+
+    token_analysis.append(ta)
+
+  return token_analysis
 
 # MAIN
 if __name__ == "__main__":
@@ -158,20 +215,16 @@ if __name__ == "__main__":
   sentence_results = []
   allTokens = []
 
-  # Analyze each centence separately
+  # Analyze each sentence separately
   for  idx, sentence in enumerate(sentences):
     # Initialize metadata dictionary which will hold the result of the analysis
     meta = {"sentence" : sentence, "idx" : idx}
-    sequences = getSequences(sentence)
+    
+    # Analyze sentece and extract all possible tokens
+    tokens = getTokensFromSentence(sentence)
 
-    # Remove the sequences we have found (TODO: optimize this)
+    print("Tokens: %s" % tokens)
 
-    for sequence in sequences:
-      sentence = sentence.replace(sequence, "")
-
-    tokens = getTokensFromText(sentence)
-
-    tokens = sequences + tokens
     meta["tokens"] = tokens
     allTokens = allTokens + tokens
 
@@ -179,33 +232,10 @@ if __name__ == "__main__":
 
   result["sentences"] = sentence_results
 
-  # Measure token frequency
-  token_freq=nltk.FreqDist(allTokens)
-  sorted_tokens = OrderedDict(sorted(token_freq.items(), key=lambda t: t[1]))
+  # Sort tokens by frequency
+  #sorted_tokens = OrderedDict(sorted(nltk.FreqDist(allTokens).items(), key=lambda t: t[1]))
 
-
-
-  token_analysis = []
-
-  for token in sorted_tokens.items():
-    # Create a dictionary for analyzed token
-    ta = {"token" : token[0], "freq" : token[1], "weight" : token[1] / len(sorted_tokens), "meta" : {}}
-    
-    # Resolvers
-    # ######################################################
-    resolve_geonames(g_db, ta)
-    #resolve_geodatasource(g_db, ta, token)
-
-    # ######################################################
-
-    # Check in which senteces appears (TODO)
-
-    # Check if a names of a city or country
-
-
-    token_analysis.append(ta)
-  
-  result["tokens"] = token_analysis
+  #result["tokens"] = analyzeTokens(sorted_tokens)
 
   with open('%s/result.json' % OUTPUT_DIR, 'w', encoding="utf-8") as fp:
     fp.write(dumps(result))
