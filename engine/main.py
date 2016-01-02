@@ -88,7 +88,11 @@ def getSentences(text):
 def getSequences(sentence):
   # TODO: Improve this regex, or replace with code, to handle cases like: 
   # Grand Cathedral of Lalala
-  return re.findall('([A-Z][a-z]+(?=\s[A-Z]*)(?:\s[A-Z][a-z]+)+)', sentence)
+
+  # No dashes: ([A-Z][a-z]+(?=\s[A-Z]*)(?:\s[A-Z][a-z]+)+)
+  # With dashes: ([A-Z][a-z]+(?=[\s|\-][A-Z][a-z]+)(?:[\s|\-][A-Z][a-z]+)+)
+  # One letter or more: ([A-Z][a-z]*(?=[\s|\-][A-Z][a-z]*)(?:[\s|\-][A-Z][a-z]*)*)
+  return re.findall('([A-Z][a-z]*(?=[\s|\-][A-Z][a-z]*)(?:[\s|\-][A-Z][a-z]*)*)', sentence)
 
 def getPattern_CofC(sentence):
   return re.findall('((?:[A-Z][a-z]+\s*)+\sof(?:\s[A-Z][a-z]+)+)', sentence)
@@ -97,9 +101,6 @@ def getPattern_CofC(sentence):
 def nltk_extractEntities(text):
   tokens = nltk.word_tokenize(text)  
   return tokens
-
-def checkLocation(token):
-  pass
 
 # All initialization only done ONCE
 def init():
