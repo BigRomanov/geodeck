@@ -123,7 +123,7 @@ def init():
 
   g_place_types = ["bar", "hotel", "restaurant", "resort", "museum", "club"]
 
-  g_adjectives = ["fabulous", "glorious", "beautiful", "fantastic", "popular", "famous", "great"]
+  g_adjectives = ["fabulous", "glorious", "beautiful", "fantastic", "popular", "famous", "great", "gorgeous", "charming", "exciting"]
 
   # Initialize set of english words
   
