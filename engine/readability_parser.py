@@ -24,7 +24,8 @@ if __name__ == "__main__":
   # Sample sources
   #source = "http://skift.com/2015/12/28/landmark-new-york-city-hotels-pledge-to-cut-greenhouse-gas-emissions/"
   #source = "http://www.aluxurytravelblog.com/2016/01/03/4-of-the-most-romantic-places-to-spend-valentines-day-in-central-america/"
-  source = "http://www.vagrantsoftheworld.com/things-to-do-in-bulgaria/"
+  #source = "http://www.vagrantsoftheworld.com/things-to-do-in-bulgaria/"
+  source = "http://www.bbc.com/travel/story/20150213-where-las-vegas-meets-pyongyang"
 
   parser_client = ParserClient(token=PARSER_TOKEN)
   parser_response = parser_client.get_article(source)
